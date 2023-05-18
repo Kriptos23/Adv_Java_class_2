@@ -43,6 +43,7 @@ public class Driver
 //        }
 
         HashMap<Automobile, Integer> SetOfModels = new HashMap<>();
+        System.out.println();
         SetOfModels.put(a, 1);
         SetOfModels.put(b, 2);
         car_interface.setSetOfModels(SetOfModels);
