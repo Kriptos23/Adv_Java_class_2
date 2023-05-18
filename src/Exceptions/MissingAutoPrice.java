@@ -1,19 +1,13 @@
 package Exceptions;
 
-public class MissingAutoPrice extends Exception
+public class MissingAutoPrice extends AutoException
 {
-    int errorCode;
 
     public MissingAutoPrice(){}
 
-    public MissingAutoPrice(String message, int errorCode)
+    public MissingAutoPrice(String message, Error errorCode)
     {
-        super(message);
-        this.errorCode = errorCode;
-    }
-    public int getErrorCode()
-    {
-        return errorCode;
+        super(message, errorCode);
     }
 
     public static void fix2()

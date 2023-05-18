@@ -1,42 +1,75 @@
 package Adapter;
 import Exceptions.AutoException;
+import Exceptions.Error;
 import Exceptions.FileNameException;
 import Exceptions.MissingAutoPrice;
 import Exceptions.NegativeAutoPrice;
 import Model.*;
 import Util.FileIO;
+import java.util.HashMap;
 
 import java.io.IOException;
+import java.util.Map;
 
 public abstract class proxyAutomobile implements CreateAuto, UpdateAuto, FixAuto
 {
-    private Auto a1;
+    private Automobile a1;
     private AutoException a2;
-    FileIO test = new FileIO();
+    private HashMap<Automobile, Integer> setOfModels;
+
+    FileIO fileIO = new FileIO();
+
+    public HashMap<Automobile, Integer> getSetOfModels() {
+        return setOfModels;
+    }
+
+    public void setSetOfModels(HashMap<Automobile, Integer> setOfModels) {
+        this.setOfModels = setOfModels;
+    }
 
     public proxyAutomobile() throws IOException {
-        this.a1 = new Auto();
+        this.a1 = new Automobile();
+        setOfModels = new HashMap<>();
     }
 
-    public void printAuto() {
-        this.a1.printAuto();
+    @Override public void printAuto(String ModelName)
+    {
+        for(Map.Entry<Automobile, Integer> i : setOfModels.entrySet())
+        {
+            if(i.getKey().getName().equals(ModelName))
+            {
+                this.a1.printAuto();
+            }
+        }
     }
-    public Auto BuildAutoObject(String fileName) throws FileNameException, NegativeAutoPrice, IOException, AutoException, MissingAutoPrice {
-        a1 = test.buildAutoObject(fileName);
+    public Automobile BuildAutoObject(String fileName) throws FileNameException, NegativeAutoPrice, IOException, AutoException, MissingAutoPrice {
+        a1 = fileIO.buildAutoObject(fileName);
         return a1;
     }
-    public void UpdateOptionSetName(String OptSN, String name)
+    @Override public void UpdateOptionSetName(String ModelName, String OptSN, String name)
     {
-        a1.UpdateOptSetName(OptSN,name);
+        for(Map.Entry<Automobile, Integer> i : setOfModels.entrySet())
+        {
+            if(i.getKey().getName().equals(ModelName))
+            {
+                a1.UpdateOptSetName(OptSN,name);
+            }
+        }
     }
 
-    @Override public void UpdateOptionPrice(String OptSN, String OptN, int price)
+    @Override public void UpdateOptionPrice(String ModelName, String OptSN, String OptN, int price)
     {
-        a1.UpdateOptionPrice(OptSN, OptN, price);
+        for(Map.Entry<Automobile, Integer> i : setOfModels.entrySet())
+        {
+            if(i.getKey().getName().equals(ModelName))
+            {
+                a1.UpdateOptionPrice(OptSN, OptN, price);
+            }
+        }
     }
 
     @Override
-    public void fix(int ErNo) throws IOException, AutoException {
+    public void fix(Error ErNo) throws IOException, AutoException {
         a2.fix(ErNo);
     }
 }

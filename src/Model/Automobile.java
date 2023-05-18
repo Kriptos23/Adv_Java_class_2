@@ -1,29 +1,31 @@
 package Model;
 
-import javax.swing.text.html.Option;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Auto implements Serializable
+public class Automobile implements Serializable
 {
     private String name;
     private double basePrice;
-    private OptionSet[] optS;
+    private ArrayList<OptionSet> optS;
+    private ArrayList<OptionSet.Options> choices;
 
-    public Auto(String name, double basePrice, int size) throws IOException {
+
+    public Automobile(String name, double basePrice, int size) throws IOException {
         this.name = name;
         this.basePrice = basePrice;
-        this.optS = new OptionSet[size];
+        this.optS = new ArrayList<>(size);
 //        if(size == 0){
 //            this.optS = null;
 //        }
 //        else {
 //            this.optS = new OptionSet[size];
 //        }
-
+        this.choices = new ArrayList<>();
     }
 
-    public Auto() {
+    public Automobile() {
 
     }
 
@@ -36,7 +38,8 @@ public class Auto implements Serializable
         sb.append(", Base price: ");
         sb.append(getBasePrice());
         sb.append(", OptionSet (Array): ");
-        sb.append(Arrays.toString(getOptS()));
+        sb.append((getOptS()));
+//        sb.append("End\n");
 
         return sb.toString();
     }
@@ -50,21 +53,22 @@ public class Auto implements Serializable
     public void addOptionSet(String name) {
         OptionSet newOptionSet = new OptionSet(name, 0);
 
-        int optS_length = this.optS.length;
-        if( optS_length == 0) {
-            OptionSet[] new_optS = new OptionSet[1];
-            new_optS[0] = newOptionSet;
-            this.setOptS(new_optS);
-        }
-        else{
-
-            OptionSet[] new_optS = new OptionSet[optS_length+1];
-            for( int i=0; i<optS_length; i++) {
-                new_optS[i] = this.optS[i];
-            }
-            new_optS[optS_length] = newOptionSet;
-            this.setOptS(new_optS);
-        }
+        optS.add(newOptionSet);
+//        int optS_length = this.optS.length;
+//        if( optS_length == 0) {
+//            OptionSet[] new_optS = new OptionSet[1];
+//            new_optS[0] = newOptionSet;
+//            this.setOptS(new_optS);
+//        }
+//        else{
+//
+//            OptionSet[] new_optS = new OptionSet[optS_length+1];
+//            for( int i=0; i<optS_length; i++) {
+//                new_optS[i] = this.optS[i];
+//            }
+//            new_optS[optS_length] = newOptionSet;
+//            this.setOptS(new_optS);
+//        }
     }
 
     public OptionSet FindSet(String name)
@@ -123,16 +127,17 @@ public class Auto implements Serializable
     public void DeleteSet(String name)
     {
         boolean found = false;//To indicate that we found the Set
-        int length = optS.length;
-        int ind = 0;//index
-        OptionSet del; // = new Options(); We don't really need this but let it stay here
+        int length = optS.size();
+//        int ind = 0;//index
+//        OptionSet del; // = new Options(); We don't really need this but let it stay here
         for (int i = 0; i < length - 1; i++)
         {
-            if (optS[i].getOptionSetName().equals(name))//To find
+            if (optS.get(i).getOptionSetName().equals(name))//To find
             {
                 System.out.println(name + " Option with name found successfully to delete");
-                del = optS[i];//We don't use it but let it be here
-                ind = i;
+                optS.remove(i);
+//                del = optS[i];//We don't use it but let it be here
+//                ind = i;
                 found = true;
                 break;
             }
@@ -141,20 +146,20 @@ public class Auto implements Serializable
         if (!found){
             System.out.println("No such OptionSet with the name "  + name + " to delete");
         }
-        else{
-            //We create temp OptionSet to swap Set we need to delete
-//        Options temp = new Options();
-            OptionSet temp = optS[length-1];
-            optS[length-1] = optS[ind];
-            optS[ind] = temp;
-
-            OptionSet[] NewArr = new OptionSet[length-1];//Process of deletion
-            for(int i = 0; i < NewArr.length; i++)
-            {
-                NewArr[i] = optS[i];
-            }
-            this.setOptS(NewArr);
-        }
+//        else{
+//            //We create temp OptionSet to swap Set we need to delete
+////        Options temp = new Options();
+//            OptionSet temp = optS[length-1];
+//            optS[length-1] = optS[ind];
+//            optS[ind] = temp;
+//
+//            OptionSet[] NewArr = new OptionSet[length-1];//Process of deletion
+//            for(int i = 0; i < NewArr.length; i++)
+//            {
+//                NewArr[i] = optS[i];
+//            }
+//            this.setOptS(NewArr);
+//        }
     }
 
     public void DeleteOption(String nameD, String SetName)
@@ -175,7 +180,7 @@ public class Auto implements Serializable
         }
     }
 
-    public void UpdateSet(String name, String NewName, int NewPrice, OptionSet.Options[] arr)
+    public void UpdateSet(String name, String NewName, ArrayList<OptionSet.Options> arr)
     {
         for (OptionSet i : this.getOptS())
         {
@@ -303,11 +308,67 @@ public class Auto implements Serializable
         sb.append(", Base price: ");
         sb.append(getBasePrice());
         sb.append(", OptionSet (Array): ");
-        sb.append(Arrays.toString(getOptS()));
+        sb.append((getOptS()));
         System.out.println(sb);
     }
 
-////////////////// GETTERS AND SETTERS ////////////////////////////////////////////////////////////////////////////////
+////////////////// GETTERS AND SETTERS + getTotalPrice ////////////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////New Methods/////////////////////
+
+    public OptionSet.Options getOptionChoice(String SetName)
+    {
+        for (OptionSet i : this.getOptS())
+        {
+            if (i.getOptionSetName().equals(SetName))
+            {
+                i.getOptionChoice();
+            }
+        }
+        System.out.println("No such OptionSet with the name "  + SetName);
+        return null;
+    }
+    public void setOptionChoice(String SetName, String OptName)
+    {
+        for (OptionSet i : this.getOptS())
+        {
+            if (i.getOptionSetName().equals(SetName))
+            {
+                i.setOptionChoice(OptName);
+                choices.add(i.getOptionChoice());
+            }
+        }
+        System.out.println("No such OptionSet with the name "  + SetName);
+    }
+    //Overload to change existing Option if user know the name
+    public double getOptionChoicePrice(String SetName)
+    {
+        double price;
+        for (OptionSet i : this.getOptS())
+        {
+            if (i.getOptionSetName().equals(SetName))
+            {
+                OptionSet.Options a = i.getOptionChoice();
+                price = a.getOptPrice();
+                return price;
+//                return i.getOptionChoice().getOptPrice();
+            }
+        }
+        System.out.println("No such OptionSet with the name "  + SetName);
+        return 0;
+    }
+    public double getTotalPrice()
+    {
+        double total = 0;
+        for (OptionSet.Options i : choices)
+        {
+            total += i.getOptPrice();
+        }
+        return total;
+    }
+
+
+    /////////////////////////////////////////////////////////////////
     public String getName() {
         return name;
     }
@@ -322,10 +383,10 @@ public class Auto implements Serializable
     }
 
 
-    public OptionSet[] getOptS() {
+    public ArrayList<OptionSet> getOptS() {
         return optS;
     }
-    public void setOptS(OptionSet optS[]) {
+    public void setOptS(ArrayList<OptionSet> optS) {
         this.optS = optS;
     }
     public OptionSet getOneOptionSet(String name){
@@ -385,7 +446,7 @@ public class Auto implements Serializable
         System.out.println("No such OptionSet with the number "  + x);
     }
     public int getOptionSetLength(){
-        return optS.length;
+        return optS.size();
     }
     public int getOptionLength(String name){
         for (OptionSet i : this.getOptS())

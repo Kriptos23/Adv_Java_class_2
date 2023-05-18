@@ -3,11 +3,9 @@ package Util;
 import java.io.*;
 import java.util.Scanner;
 
-import Exceptions.AutoException;
-import Exceptions.FileNameException;
-import Exceptions.MissingAutoPrice;
-import Exceptions.NegativeAutoPrice;
-import Model.Auto;
+import Exceptions.*;
+import Exceptions.Error;
+import Model.Automobile;
 
 public class FileIO
 {
@@ -42,12 +40,13 @@ public class FileIO
 //        }
 //        return newName;
     }
-    public Auto buildAutoObject(String fileName) throws FileNameException, IOException, NegativeAutoPrice, AutoException, MissingAutoPrice {
+    public Automobile buildAutoObject(String fileName) throws FileNameException, IOException, NegativeAutoPrice, AutoException, MissingAutoPrice {
         boolean AutoFlag = false;
         boolean OptionSetFlag = false;
         boolean OptionFlag = false;
+        boolean MOSDException = false;
 
-        Auto new_car = new Auto("",0,0);
+        Automobile new_car = new Automobile("",0,0);
 
         String last_OptionSetName = "";
         String tempOptionName = "";
@@ -57,7 +56,7 @@ public class FileIO
         File file = new File(fileName);
         if (!(file.exists()))
         {
-            throw new AutoException("\nFile doesn't exist or you made a typo, dummie",1);
+            throw new FileNameException(Error.FILE_NAME_ERROR.message, Error.FILE_NAME_ERROR);
 //            throw new FileNameException("\nFile doesn't exist, or you made a typo, dummie",1);
         }
         FileReader read = new FileReader(file);
@@ -72,7 +71,6 @@ public class FileIO
             line = line.replaceAll("\\s+", "");
             line = line.replaceAll("_", " ");
             String[] word_in_line = line.split(":"); // ex: line = "name Toyota Dan iel" => array of Strings word_in_line = ["name", "Toyota", "Dan", "iel"]
-
             if (word_in_line.length == 1)
             {
                 if (word_in_line[0].equals("Auto"))
@@ -87,7 +85,9 @@ public class FileIO
                 {
                     if (!OptionSetFlag) {
                         OptionSetFlag = true;
+                        MOSDException = false;
                     } else {
+                        last_OptionSetName = "";
                         OptionSetFlag = false;
                     }
                 }
@@ -96,12 +96,21 @@ public class FileIO
                     if (!OptionFlag) {
                         OptionFlag = true;
                     } else {
+                        tempOptionName = "";
                         OptionFlag = false;
                     }
                 }
                 else if (word_in_line[0].equals("basePrice"))
                 {
-                    throw new AutoException("You are missing base price in txt file!", 2);
+                    throw new MissingAutoPrice(Error.MISSING_AUTO_PRICE.message, Error.MISSING_AUTO_PRICE);
+                }
+                else if (word_in_line[0].equals("name") && !OptionFlag && OptionSetFlag)
+                {
+                    throw new MissingOptionSetName(Error.MISSING_OPTION_SET_NAME.message, Error.MISSING_OPTION_SET_NAME);
+                }
+                else if (word_in_line[0].equals("name") && OptionFlag)
+                {
+                    throw new MissingOptionName(Error.MISSING_OPTION_NAME.message, Error.MISSING_OPTION_NAME);
                 }
                 continue;
             }
@@ -112,6 +121,10 @@ public class FileIO
                         tempOptionName = word_in_line[1];
                         new_car.addOption(last_OptionSetName, word_in_line[1], 0);
                     } else if (word_in_line[0].equals("price")) {
+                        if (tempOptionName.isEmpty())
+                        {
+                            throw new MissingOptionNameLine(Error.MISSING_OPTION_NAME_LINE.message, Error.MISSING_OPTION_NAME_LINE);
+                        }
                         new_car.UpdateOptionWithoutMessage(last_OptionSetName, tempOptionName, tempOptionName, Integer.parseInt(word_in_line[1]));
                         count++;
                     }
@@ -129,7 +142,7 @@ public class FileIO
                     {
                         if ((Double.parseDouble(word_in_line[1])<0))
                         {
-                            throw new AutoException("\n" + "No Auto price in the reading file!", 3);
+                            throw new NegativeAutoPrice(Error.NEGATIVE_AUTO_PRICE.message, Error.NEGATIVE_AUTO_PRICE);
                         }
                         else
                         {

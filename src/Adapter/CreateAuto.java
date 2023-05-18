@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public interface CreateAuto
 {
-    Auto BuildAutoObject(String fileName) throws FileNameException, NegativeAutoPrice, IOException, AutoException, MissingAutoPrice;
-    void printAuto();
+    void printAuto(String ModelName);
+
+    Automobile BuildAutoObject(String fileName) throws FileNameException, NegativeAutoPrice, IOException, AutoException, MissingAutoPrice;
+//    void printAuto();
 }

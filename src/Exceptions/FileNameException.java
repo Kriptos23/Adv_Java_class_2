@@ -3,20 +3,13 @@ package Exceptions;
 import java.io.File;
 import java.util.Scanner;
 
-public class FileNameException extends Exception
+public class FileNameException extends AutoException
 {
-    int errorCode;
     public FileNameException(){}
 
-    public FileNameException(String message, int errorCode)
+    public FileNameException(String message, Error errorCode)
     {
-        super(message);
-        this.errorCode = errorCode;
-    }
-
-    public int getErrorCode()
-    {
-        return errorCode;
+        super(message, errorCode);
     }
 
     public static String fix1() {

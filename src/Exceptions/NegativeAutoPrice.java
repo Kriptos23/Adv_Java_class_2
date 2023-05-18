@@ -3,20 +3,13 @@ package Exceptions;
 import java.io.*;
 import java.util.Scanner;
 
-public class NegativeAutoPrice extends Exception
+public class NegativeAutoPrice extends AutoException
 {
-    int errorCode;
-
     public NegativeAutoPrice(){}
 
-    public NegativeAutoPrice(String message, int errorCode)
+    public NegativeAutoPrice(String message, Error errorCode)
     {
-        super(message);
-        this.errorCode = errorCode;
-    }
-    public int getErrorCode()
-    {
-        return errorCode;
+        super(message, errorCode);
     }
 
     public static void fix3()
