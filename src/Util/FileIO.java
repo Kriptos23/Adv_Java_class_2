@@ -159,7 +159,7 @@ public class FileIO
             line_number++;
         }
         //System.out.println("Method BuildAuto CheckPoint");
-        System.out.println(new_car);
+//        System.out.println(new_car);
         return new_car;
     }
 

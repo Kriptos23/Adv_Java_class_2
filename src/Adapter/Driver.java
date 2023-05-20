@@ -16,13 +16,14 @@ public class Driver
     {
 
 
-        BuildAuto car_interface = new BuildAuto();
-        Automobile a = null;
-        Automobile b = null;
+        BuildAuto a = new BuildAuto();
+        BuildAuto b = new BuildAuto();
+//        Automobile a = null;
+//        Automobile b = null;
         try
         {
-            a = car_interface.BuildAutoObject("Car.txt");
-            b = car_interface.BuildAutoObject("Car.txt");
+            a.BuildAutoObject("Car.txt");
+            b.BuildAutoObject("Car.txt");
         }
         catch (AutoException e)
         {
@@ -32,7 +33,7 @@ public class Driver
             if(e.getErrorCode() == Error.FILE_NAME_ERROR)
             {
                 System.out.println("Hello there");
-                car_interface.BuildAutoObject(AutoException.getCorrectFileName());
+                a.BuildAutoObject(AutoException.getCorrectFileName());
             }
         }
 //        catch (FileNameException e)
@@ -42,18 +43,19 @@ public class Driver
 //            car_interface.BuildAutoObject(a);
 //        }
 
-        HashMap<Automobile, Integer> SetOfModels = new HashMap<>();
-        SetOfModels.put(a, 1);
-        SetOfModels.put(b, 2);
-        car_interface.setSetOfModels(SetOfModels);
 
 
-        car_interface.UpdateOptionPrice("Ford's Focus Wagon ZTW" ,"Color","Fort Knox Gold ClearCoat Metallic", 10);
-        car_interface.UpdateOptionSetName("Ford's Focus Wagon ZTW","Color", "Colour");
-        car_interface.UpdateOptionPrice("Ford's Focus Wagon ZTW" , "Colour","Fort Knox Gold ClearCoat Metallic", 23);
-        car_interface.printAuto("Ford's Focus Wagon ZTW");
-        System.out.println("Set of Models: ");
-        System.out.println(SetOfModels);
+        b.UpdateOptionPrice("Ford's Focus Wagon ZTW" ,"Color","Fort Knox Gold ClearCoat Metallic", 10);
+        b.UpdateOptionSetName("Ford's Focus Wagon ZTW","Color", "Colour");
+        b.UpdateOptionPrice("Ford's Focus Wagon ZTW" , "Colour","Fort Knox Gold ClearCoat Metallic", 23);
+
+//        System.out.println("*** Printing BuildAuto a: ***");
+//        a.printAuto("Ford's Focus Wagon ZTW");
+//        System.out.println("*** Printing BuildAuto b: ***");
+//        b.printAuto("Ford's Focus Wagon ZTW");
+
+        System.out.println("Set of Models size: ");
+        System.out.println(proxyAutomobile.getSetOfModels().size());
 
     }
 }

@@ -12,6 +12,6 @@ public interface CreateAuto
 {
     void printAuto(String ModelName);
 
-    Automobile BuildAutoObject(String fileName) throws FileNameException, NegativeAutoPrice, IOException, AutoException, MissingAutoPrice;
-//    void printAuto();
+    void BuildAutoObject(String fileName) throws FileNameException, NegativeAutoPrice, IOException, AutoException, MissingAutoPrice;
+
 }
