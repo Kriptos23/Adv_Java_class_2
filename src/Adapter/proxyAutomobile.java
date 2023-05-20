@@ -27,7 +27,7 @@ public abstract class proxyAutomobile implements CreateAuto, UpdateAuto, FixAuto
         this.setOfModels = setOfModels;
     }
 
-    public proxyAutomobile() throws IOException {
+    public proxyAutomobile()  {
         this.a1 = new Automobile();
         setOfModels = new HashMap<>();
     }

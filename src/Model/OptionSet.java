@@ -25,7 +25,7 @@ public class OptionSet implements Serializable
     }
 
     /////////////////Methods/////////
-    public void addOption(Options NewOpt)//aka buildOption
+    protected void addOption(Options NewOpt)//aka buildOption
     {
         opt.add(NewOpt);
 //        int length = this.opt.length;
@@ -38,7 +38,7 @@ public class OptionSet implements Serializable
 //        this.setOpt(NewArr);//Making old array become new one
     }
     //OverLoad
-    public void addOption(String SetName, String Oname, double Oprice)//aka build option
+    protected void addOption(String SetName, String Oname, double Oprice)//aka build option
     {
         Options NewOpt = new Options(Oname, Oprice);//New Option
         opt.add(NewOpt);
@@ -52,7 +52,7 @@ public class OptionSet implements Serializable
 //        this.setOpt(NewArr);//Making old array become new one
     }
 
-    public void deleteOption(String name)
+    protected void deleteOption(String name)
     {
         for (Options i : opt)
         {
@@ -97,7 +97,7 @@ public class OptionSet implements Serializable
 //        }
     }
 
-    public void UpdateOption(String oldName, String NewName, int NewPrice)
+    protected void UpdateOption(String oldName, String NewName, int NewPrice)
     {
         boolean found = false;
         for (Options j : this.getOpt())
@@ -116,7 +116,7 @@ public class OptionSet implements Serializable
             System.out.println("No such Option with that name");
         }
     }
-    public void UpdateOptionWithoutMessage(String oldName, String NewName, int NewPrice)
+    protected void UpdateOptionWithoutMessage(String oldName, String NewName, int NewPrice)
     {
         boolean found = false;
         for (Options j : this.getOpt())
