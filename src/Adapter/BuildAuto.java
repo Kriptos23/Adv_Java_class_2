@@ -1,10 +1,10 @@
 package Adapter;
 
-import Exceptions.AutoException;
+import Scale.EditAuto;
+import Server.AutoServer;
 
-import java.io.IOException;
 
-public class BuildAuto extends proxyAutomobile implements CreateAuto, UpdateAuto, FixAuto
+public class BuildAuto extends proxyAutomobile implements CreateAuto, UpdateAuto, EditAuto, LHMethods, AutoServer
 {
 
 }

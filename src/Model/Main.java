@@ -13,8 +13,18 @@ import Exceptions.NegativeAutoPrice;
 import Util.FileIO;
 
 
-public class Main implements Serializable
+public class Main //This is old Assignment 1 test class, not needed anymore
 {
+     /** How the txt file should look like?
+     * First of all, auto should start and end with "Auto"
+     * OptionSet should start and end with "OptionSet"
+     * Option should start and end with "Option"
+     * Spaces between name should be replaced with underline "_"
+     * names and other properties of Option should be inside of Option
+     * names and other properties of OptionSet should be inside OptionSet
+     * names and other properties of Auto should be inside of Auto
+     * txt file is user-friendly and easily can be understood by human
+     * **/
     public static void main(String[] args) throws IOException, FileNameException, ClassNotFoundException, NegativeAutoPrice, AutoException, MissingAutoPrice {
         //My testing that I was doing during the code writing, includes in itself more detailed testing of
         //Option/OptionSet/Auto class methods
@@ -26,67 +36,28 @@ public class Main implements Serializable
         System.out.println("Method test");
         System.out.println();
         Automobile car_1 = null;
-        FileIO test = new FileIO();
+        FileIO fileIO = new FileIO();
+
         //Build Automobile Object from a file.
         System.out.println("Print B4 serialization: ");
 
-        boolean IsValid = false;
-        String NewName = "";
-
-//        car_1 = test.buildAutoObject("Cara.txt", car_1);
-
-//        while(!IsValid)
-//        {
-//            try {
-//                car_1 = test.buildAutoObject("Car.txt");//method also prints the object
-//                IsValid = true;
-//            }
-//            catch (AutoException e)
-//            {
-//                if(e.getErrorCode()==1)
-//                {
-//                    AutoException.fix(1);
-//                }
-//            }
-//            catch (FileNameException e)
-//            {
-//                System.out.println("There is a problem with file name, enter new: ");
-//                NewName = sc.nextLine();
-//                car_1 = test.buildAutoObject(NewName);
-//                IsValid = true;
-//            }
-//            catch (NegativeAutoPrice e)
-//            {
-//                System.out.println("Price can't be less than 0, check txt file");
-//                throw new RuntimeException(e);
-//            }
-//        }
-
-        System.out.println("Here:");
+        car_1 = fileIO.buildAutoObject("Car.txt");
         car_1.printAuto();
         System.out.println();
-        //Print attributes before serialization
 
         //Serialize the object
         System.out.println("Serialization process: ");
-        FileOutputStream fileOut = new FileOutputStream("CarSerialization.txt");
-        ObjectOutputStream out = new ObjectOutputStream(fileOut);
-        out.writeObject(car_1);
-        out.close();
-        fileOut.close();
-        System.out.println("Info saved :)");
+        String serializationFile = "CarSerialization.txt";
+        fileIO.serialize(serializationFile, car_1);
         System.out.println();
 
         //Deserialize the object and read it into memory.
         System.out.println("Deserialization process");
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream("CarSerialization.txt"));
-        Automobile Ford2 = null;
-        Ford2 = (Automobile) in.readObject();
+        Automobile ford3 = fileIO.deserialize(serializationFile);
 
         //Print new attributes.
         System.out.println("\nAfter Serialization/Deserialization Print:");
-        System.out.println(Ford2);
-
+        ford3.printAuto();
     }
 
 

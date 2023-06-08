@@ -23,33 +23,27 @@ public class OptionSet implements Serializable
         //        this.opt = new Options[size];
 
     }
+    public OptionSet(String OptionSetName)
+    {
+        this(OptionSetName, 0);
+        this.opt = new ArrayList<>();
+    }
+    public OptionSet(int size)
+    {
+        this("",size);
+        this.opt = new ArrayList<>();
+    }
 
     /////////////////Methods/////////
     protected void addOption(Options NewOpt)//aka buildOption
     {
         opt.add(NewOpt);
-//        int length = this.opt.length;
-//        Options[] NewArr = new Options[length+1];//New bigger array
-//        for(int i = 0; i < length; i++)//Process of copying the old array
-//        {
-//            NewArr[i] = opt[i];
-//        }
-//        NewArr[length] = NewOpt;//Adding new option
-//        this.setOpt(NewArr);//Making old array become new one
     }
     //OverLoad
     protected void addOption(String SetName, String Oname, double Oprice)//aka build option
     {
         Options NewOpt = new Options(Oname, Oprice);//New Option
         opt.add(NewOpt);
-//        int length = this.opt.length;
-//        Options[] NewArr = new Options[length+1];//New bigger array
-//        for(int i = 0; i < length; i++)//Process of copying the old array
-//        {
-//            NewArr[i] = opt[i];
-//        }
-//        NewArr[length] = NewOpt;//Adding new option
-//        this.setOpt(NewArr);//Making old array become new one
     }
 
     protected void deleteOption(String name)
@@ -61,40 +55,6 @@ public class OptionSet implements Serializable
                 opt.remove(i);
             }
         }
-
-//        boolean found = false;// To indicate when Option is found
-//        int length = this.opt.length;
-//        int ind = 0;//index
-//        Options del; // = new Options();
-//        for (int i = 0; i < length - 1; i++)
-//        {
-//            if (opt[i].getOptName().equals(name))//To find
-//            {
-//                System.out.println(name + " Option with name found successfully to delete");
-//                del = opt[i];//We don't use it but let it be here
-//                ind = i;
-//                found = true;
-//                break;
-//            }
-//            ind++;
-//        }
-//        if (!found){
-//            System.out.println("Option with name " + name + " didn't found to delete");
-//        }
-//        else{
-//            //We create temp Options to swap Option we need to delete with last element
-////        Options temp = new Options();
-//            Options temp = opt[length-1];
-//            opt[length-1] = opt[ind];
-//            opt[ind] = temp;
-//
-//            Options[] NewArr = new Options[length-1];//New Array
-//            for(int i = 0; i < NewArr.length; i++)//Process of deletion
-//            {
-//                NewArr[i] = opt[i];
-//            }
-//            this.setOpt(NewArr);
-//        }
     }
 
     protected void UpdateOption(String oldName, String NewName, int NewPrice)
@@ -136,6 +96,7 @@ public class OptionSet implements Serializable
         }
     }
 
+    // We assume that user uses index starting with 1 not 0:
     protected void printOneOption(int x)
     {
         int count = 1;
@@ -143,6 +104,7 @@ public class OptionSet implements Serializable
         {
             if(count == x){
                 System.out.println(i);
+                return;
             }
             count++;
         }
@@ -153,11 +115,12 @@ public class OptionSet implements Serializable
     {
         boolean found = false;// To indicate when Option is found
         int length = this.opt.size();
-        for (int i = 0; i < length - 1; i++)
+        for (int i = 0; i < length; i++)
         {
             if (opt.get(i).getOptName().equals(Oname))//To find
             {
                 System.out.println(opt.get(i));
+                return;
             }
         }
         System.out.println("Option with name " + Oname + " No such Option, printOneOption failed");
@@ -193,9 +156,9 @@ public class OptionSet implements Serializable
         }
     }
 
-////////////////// GETTERS AND SETTERS ////////////////////////////////////////////////////////////////////////////////
-
-///////////////////New methods////////////////////////////////////////////////////////////////////////////////////////
+    /****************************************************************
+     ******** OptionChoice GETTERS AND SETTERS *************** ******
+     ***************************************************************/
 
     protected Options getOptionChoice()
     {
@@ -203,22 +166,18 @@ public class OptionSet implements Serializable
     }
     protected void setOptionChoice(String OptionName)
     {
-//        Options[] NewArr = new Options[1];//New Array
-        double price;
         for (Options i : getOpt())
         {
             if (i.getOptName().equals(OptionName))
             {
-//                price = i.getOptPrice();
-//                NewArr[0] = new Options(i.getOptName(), price);
-//                OptionChoice = new Options(i.getOptName(), price);
                 OptionChoice = i;
             }
         }
-//        this.setOpt(NewArr);
     }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /****************************************************************
+     ******** OptionSet GETTERS AND SETTERS *************** ********
+     ***************************************************************/
     protected ArrayList<Options> getOpt() {
         return opt;
     }
@@ -234,6 +193,7 @@ public class OptionSet implements Serializable
         OptionSetName = optionName;
     }
 
+    // We assume that user uses index starting with 1 not 0:
     protected String getOptionName(int x){
         int count = 1;
         for(Options i : opt)
@@ -247,17 +207,20 @@ public class OptionSet implements Serializable
         String o = null;
         return o;
     }
+    // We assume that user uses index starting with 1 not 0:
     protected void setOptionName(int x, String OName){
         int count = 1;
         for(Options i : opt)
         {
             if(count == x){
                 i.setOptName(OName);
+                return;
             }
             count++;
         }
         System.out.println("No such Option, setOptionName failed");
     }
+    // We assume that user uses index starting with 1 not 0:
     protected double getOptionPrice(int x){
         int count = 1;
         for(Options i : opt)
@@ -274,7 +237,7 @@ public class OptionSet implements Serializable
     protected double getOptionPrice(String Oname){
         boolean found = false;// To indicate when Option is found
         int length = this.opt.size();
-        for (int i = 0; i < length - 1; i++)
+        for (int i = 0; i < length; i++)
         {
             if (opt.get(i).getOptName().equals(Oname))//To find
             {
@@ -300,7 +263,7 @@ public class OptionSet implements Serializable
     protected Options getOneOpt(String Oname){
         boolean found = false;// To indicate when Option is found
         int length = this.opt.size();
-        for (int i = 0; i < length - 1; i++)
+        for (int i = 0; i < length; i++)
         {
             if (opt.get(i).getOptName().equals(Oname))//To find
             {
@@ -330,7 +293,7 @@ public class OptionSet implements Serializable
 
         boolean found = false;// To indicate when Option is found
         int length = this.opt.size();
-        for (int i = 0; i < length - 1; i++)
+        for (int i = 0; i < length; i++)
         {
             if (opt.get(i).getOptName().equals(Oname))//To find
             {
@@ -377,15 +340,24 @@ public class OptionSet implements Serializable
         private static int size; //not used
 
         //////// Constructors ////////////
-        public Options()
-        {
-        }
         public Options (String OptName, double OptPrice)
         {
             this.OptName = OptName;
             this.OptPrice = OptPrice;
             size++;
 
+        }
+        public Options()
+        {
+            this("",0.0);
+        }
+        public Options (String OptName)
+        {
+            this(OptName, 0.0);
+        }
+        public Options (double OptPrice)
+        {
+            this("", OptPrice);
         }
         //Methods
         @Override

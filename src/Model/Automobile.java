@@ -12,21 +12,32 @@ public class Automobile implements Serializable
     private ArrayList<OptionSet.Options> choices;
 
 
-    public Automobile(String name, double basePrice, int size) throws IOException {
+    public Automobile(String name, double basePrice, int size)
+    {
         this.name = name;
         this.basePrice = basePrice;
         this.optS = new ArrayList<>(size);
-//        if(size == 0){
-//            this.optS = null;
-//        }
-//        else {
-//            this.optS = new OptionSet[size];
-//        }
         this.choices = new ArrayList<>();
     }
 
-    public Automobile() {
+    public Automobile() {this("", 0.0, 0);}
+    public Automobile(String name, double basePrice) {
+        this(name, basePrice, 0);
+    }
 
+    public Automobile(ArrayList<OptionSet> optS)
+    {
+        this.name = "";
+        this.basePrice = 0;
+        this.optS = optS;
+    }
+
+    public Automobile(double basePrice) {
+        this("", basePrice, 0);
+    }
+
+    public Automobile(String name) {
+        this(name, 0, 0);
     }
 
     @Override
@@ -50,28 +61,13 @@ public class Automobile implements Serializable
 //            OptionSet color = Ford.FindSet("color");
 //            OptionSet color = Ford.FindColorOptionSet();
 
-    public void addOptionSet(String name) {
+    public synchronized void addOptionSet(String name)
+    {
         OptionSet newOptionSet = new OptionSet(name, 0);
-
         optS.add(newOptionSet);
-//        int optS_length = this.optS.length;
-//        if( optS_length == 0) {
-//            OptionSet[] new_optS = new OptionSet[1];
-//            new_optS[0] = newOptionSet;
-//            this.setOptS(new_optS);
-//        }
-//        else{
-//
-//            OptionSet[] new_optS = new OptionSet[optS_length+1];
-//            for( int i=0; i<optS_length; i++) {
-//                new_optS[i] = this.optS[i];
-//            }
-//            new_optS[optS_length] = newOptionSet;
-//            this.setOptS(new_optS);
-//        }
     }
 
-    public OptionSet FindSet(String name)
+    public synchronized OptionSet FindSet(String name)
     {
         for (OptionSet i : this.getOptS())
         {
@@ -86,7 +82,7 @@ public class Automobile implements Serializable
         return null;
     }
 
-    public OptionSet.Options FindOption(String name)
+    public synchronized OptionSet.Options FindOption(String name)
     {
         for (OptionSet i : this.getOptS())
         {
@@ -103,7 +99,7 @@ public class Automobile implements Serializable
         return null;
     }
 
-    public OptionSet.Options FindOption(String name, String optionSetName)
+    public synchronized OptionSet.Options FindOption(String name, String optionSetName)
     {
         for (OptionSet i : this.getOptS())
         {
@@ -124,20 +120,16 @@ public class Automobile implements Serializable
     }
 
 
-    public void DeleteSet(String name)
+    public synchronized void DeleteSet(String name)
     {
         boolean found = false;//To indicate that we found the Set
         int length = optS.size();
-//        int ind = 0;//index
-//        OptionSet del; // = new Options(); We don't really need this but let it stay here
-        for (int i = 0; i < length - 1; i++)
+        for (int i = 0; i < length; i++)
         {
             if (optS.get(i).getOptionSetName().equals(name))//To find
             {
                 System.out.println(name + " Option with name found successfully to delete");
                 optS.remove(i);
-//                del = optS[i];//We don't use it but let it be here
-//                ind = i;
                 found = true;
                 break;
             }
@@ -146,41 +138,21 @@ public class Automobile implements Serializable
         if (!found){
             System.out.println("No such OptionSet with the name "  + name + " to delete");
         }
-//        else{
-//            //We create temp OptionSet to swap Set we need to delete
-////        Options temp = new Options();
-//            OptionSet temp = optS[length-1];
-//            optS[length-1] = optS[ind];
-//            optS[ind] = temp;
-//
-//            OptionSet[] NewArr = new OptionSet[length-1];//Process of deletion
-//            for(int i = 0; i < NewArr.length; i++)
-//            {
-//                NewArr[i] = optS[i];
-//            }
-//            this.setOptS(NewArr);
-//        }
     }
 
-    public void DeleteOption(String nameD, String SetName)
+    public synchronized void DeleteOption(String nameD, String SetName)
     {
-        for(OptionSet i : optS)
+        if (this.FindSet(SetName) != null)
         {
-            if (i.getOptionSetName().equals(SetName))//To find
-            {
-                for (OptionSet.Options j : i.getOpt())//Goes into the Options
-                {
-                   if (j.getOptName().equals(nameD))//To find
-                   {
-                       i.deleteOption(nameD);//Process of deletion
-                       break;
-                   }
-                }
-            }
+            this.FindSet(SetName).deleteOption(nameD);
+        }
+        else
+        {
+            System.out.println("No such OptionSet with the name "  + SetName + " to delete");
         }
     }
 
-    public void UpdateSet(String name, String NewName, ArrayList<OptionSet.Options> arr)
+    public synchronized void UpdateSet(String name, String NewName, ArrayList<OptionSet.Options> arr)
     {
         for (OptionSet i : this.getOptS())
         {
@@ -197,7 +169,7 @@ public class Automobile implements Serializable
 
     // updates Option, when no OptionSet name is given. Looks in all OptionSets, and all Options
 
-    public void UpdateOption(String OptionSetName,String oldName, String NewName, int NewPrice)
+    public synchronized void UpdateOption(String OptionSetName,String oldName, String NewName, int NewPrice)
     {
         boolean found = false;
         for (OptionSet i : this.getOptS())
@@ -205,6 +177,7 @@ public class Automobile implements Serializable
             if (i.getOptionSetName().equals(OptionSetName))
             {
                 i.UpdateOption(oldName, NewName, NewPrice);
+//                notifyAll();
                 found = true;
             }
         }
@@ -213,7 +186,24 @@ public class Automobile implements Serializable
             System.out.println("No such Option with the name" + oldName);
         }
     }
-    public void UpdateOptionWithoutMessage(String OptionSetName,String oldName, String NewName, int NewPrice)
+    public void UpdateOptionNonSynch(String OptionSetName,String oldName, String NewName, int NewPrice)
+    {
+        boolean found = false;
+        for (OptionSet i : this.getOptS())
+        {
+            if (i.getOptionSetName().equals(OptionSetName))
+            {
+                    i.UpdateOption(oldName, NewName, NewPrice);
+                    found = true;
+
+            }
+        }
+        if (!found)
+        {
+            System.out.println("No such Option with the name" + oldName);
+        }
+    }
+    public synchronized void UpdateOptionWithoutMessage(String OptionSetName,String oldName, String NewName, int NewPrice)
     {
         boolean found = false;
         for (OptionSet i : this.getOptS())
@@ -231,7 +221,7 @@ public class Automobile implements Serializable
     }
 
     // Might have bugs
-    public void addOption(String optionSetName, String optionName, double optionPrice)//aka build option
+    public synchronized void addOption(String optionSetName, String optionName, double optionPrice)//aka build option
     {
         // 1. find the OptionSet with SetName:
         for(OptionSet i : this.getOptS())
@@ -247,7 +237,7 @@ public class Automobile implements Serializable
     }
     ////////New Methods///////
 
-    public void UpdateOptSetName(String optSet, String NewName)
+    public synchronized void UpdateOptSetName(String optSet, String NewName)
     {
         for (OptionSet i : optS)
         {
@@ -258,7 +248,7 @@ public class Automobile implements Serializable
         }
     }
 
-    public void UpdateOptionPrice(String OptSN, String OptN, double price)
+    public synchronized void UpdateOptionPrice(String OptSN, String OptN, double price)
     {
         for(OptionSet j : optS)
         {
@@ -312,9 +302,10 @@ public class Automobile implements Serializable
         System.out.println(sb);
     }
 
-////////////////// GETTERS AND SETTERS + getTotalPrice ////////////////////////////////////////////////////////////////////////////////
 
-    //////////////////////////New Methods/////////////////////
+    /************************* New Methods **************************
+     ******** OptionChoice GETTERS AND SETTERS + getTotalPrice ******
+     ***************************************************************/
 
     public OptionSet.Options getOptionChoice(String SetName)
     {
@@ -322,7 +313,7 @@ public class Automobile implements Serializable
         {
             if (i.getOptionSetName().equals(SetName))
             {
-                i.getOptionChoice();
+                return i.getOptionChoice();
             }
         }
         System.out.println("No such OptionSet with the name "  + SetName);
@@ -336,6 +327,7 @@ public class Automobile implements Serializable
             {
                 i.setOptionChoice(OptName);
                 choices.add(i.getOptionChoice());
+                return;
             }
         }
         System.out.println("No such OptionSet with the name "  + SetName);
@@ -343,23 +335,16 @@ public class Automobile implements Serializable
     //Overload to change existing Option if user know the name
     public double getOptionChoicePrice(String SetName)
     {
-        double price;
-        for (OptionSet i : this.getOptS())
+        OptionSet.Options  optionChoice = getOptionChoice(SetName);
+        if (optionChoice == null)
         {
-            if (i.getOptionSetName().equals(SetName))
-            {
-                OptionSet.Options a = i.getOptionChoice();
-                price = a.getOptPrice();
-                return price;
-//                return i.getOptionChoice().getOptPrice();
-            }
+            return 0;
         }
-        System.out.println("No such OptionSet with the name "  + SetName);
-        return 0;
+        return optionChoice.getOptPrice();
     }
     public double getTotalPrice()
     {
-        double total = 0;
+        double total = basePrice;
         for (OptionSet.Options i : choices)
         {
             total += i.getOptPrice();
@@ -367,8 +352,10 @@ public class Automobile implements Serializable
         return total;
     }
 
+    /****************************************************************
+     ******** Automobile GETTERS AND SETTERS ***********************
+     ***************************************************************/
 
-    /////////////////////////////////////////////////////////////////
     public String getName() {
         return name;
     }
@@ -382,14 +369,13 @@ public class Automobile implements Serializable
         this.basePrice = basePrice;
     }
 
-
     public ArrayList<OptionSet> getOptS() {
         return optS;
     }
-    public void setOptS(ArrayList<OptionSet> optS) {
+    public synchronized void setOptS(ArrayList<OptionSet> optS) {
         this.optS = optS;
     }
-    public OptionSet getOneOptionSet(String name){
+    public synchronized OptionSet getOneOptionSet(String name){
         for (OptionSet i : this.getOptS())
         {
 
@@ -403,7 +389,7 @@ public class Automobile implements Serializable
         return null;
     }
     //Overload
-    public OptionSet getOneOptionSet(int x){
+    public synchronized OptionSet getOneOptionSet(int x){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -417,7 +403,7 @@ public class Automobile implements Serializable
         System.out.println("No such OptionSet with the number "  + x);
         return null;
     }
-    public void setOneOptionSet(String name, OptionSet option)
+    public synchronized void setOneOptionSet(String name, OptionSet option)
     {
         for(OptionSet i : this.getOptS())
         {
@@ -430,7 +416,7 @@ public class Automobile implements Serializable
         }
         System.out.println("No such OptionSet with the name "  + name);
     }
-    public void setOneOptionSet(int x, OptionSet option)
+    public synchronized void setOneOptionSet(int x, OptionSet option)
     {
         int count = 1;
         for (OptionSet i : this.getOptS())
@@ -445,10 +431,10 @@ public class Automobile implements Serializable
         }
         System.out.println("No such OptionSet with the number "  + x);
     }
-    public int getOptionSetLength(){
+    public synchronized int getOptionSetLength(){
         return optS.size();
     }
-    public int getOptionLength(String name){
+    public synchronized int getOptionLength(String name){
         for (OptionSet i : this.getOptS())
         {
             if(i.getOptionSetName().equals(name))
@@ -460,7 +446,7 @@ public class Automobile implements Serializable
         return 0;
     }
     //Overload
-    public int getOptionLength(int x){
+    public synchronized int getOptionLength(int x){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -473,7 +459,7 @@ public class Automobile implements Serializable
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
         return 0;
     }
-    public String getOptionSetName(int x){
+    public synchronized String getOptionSetName(int x){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -486,7 +472,7 @@ public class Automobile implements Serializable
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
         return null;
     }
-    public void setOptionSetName(int x, String name){
+    public synchronized void setOptionSetName(int x, String name){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -499,7 +485,7 @@ public class Automobile implements Serializable
         }
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
     }
-    public String getOptionName(int x, String OptionSetName){
+    public synchronized String getOptionName(int x, String OptionSetName){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -519,7 +505,7 @@ public class Automobile implements Serializable
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
         return null;
     }
-    public void setOptionName(int x, String OptionSetName, String newName){
+    public synchronized void setOptionName(int x, String OptionSetName, String newName){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -539,7 +525,7 @@ public class Automobile implements Serializable
         }
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
     }
-    public double getOptionPrice(int x, String OptionSetName){
+    public synchronized double getOptionPrice(int x, String OptionSetName){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -559,7 +545,7 @@ public class Automobile implements Serializable
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
         return 0;
     }
-    public void setOptionPrice(int x, String OptionSetName, double newPrice){
+    public synchronized void setOptionPrice(int x, String OptionSetName, double newPrice){
         int count = 1;
         for (OptionSet i : this.getOptS())
         {
@@ -579,7 +565,7 @@ public class Automobile implements Serializable
         }
         System.out.println("No such OptionSet with number" + x + " to return a OptionSet length");
     }
-    public void setOneOptionSetOption(int x, String name, String newName, double newPrice)
+    public synchronized void setOneOptionSetOption(int x, String name, String newName, double newPrice)
     {
         for(OptionSet i : this.getOptS())
         {

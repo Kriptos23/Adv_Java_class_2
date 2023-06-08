@@ -9,14 +9,10 @@ public class AutoException extends  Exception
 
     public Error errorCode;
     public AutoException(){}
-    static String CorrectFileName = "";
+    private static String CorrectFileName = "";
 
     public static String getCorrectFileName() {
         return CorrectFileName;
-    }
-
-    public static void setCorrectFileName(String correctFileName) {
-        CorrectFileName = correctFileName;
     }
 
     public AutoException(String message, Error errorCode)
@@ -29,7 +25,6 @@ public class AutoException extends  Exception
     {
         return errorCode;
     }
-    public static void fix(){}
     public static void fix(Error errNumber) throws AutoException, IOException {
 
         switch (errNumber)
@@ -52,6 +47,8 @@ public class AutoException extends  Exception
             case MISSING_OPTION_NAME_LINE:
                 MissingOptionNameLine.fix6();
                 break;
+            default:
+                throw new AutoException(Error.UNKNOWN_ERROR.message, Error.UNKNOWN_ERROR);
 
         }
     }

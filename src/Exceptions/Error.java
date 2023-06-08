@@ -7,7 +7,9 @@ public enum Error
     NEGATIVE_AUTO_PRICE("\nNegative Auto price in the reading file!"),
     MISSING_OPTION_SET_NAME("\nYou are missing OptionSetName!"),
     MISSING_OPTION_NAME("\nYou are missing OptionName!"),
-    MISSING_OPTION_NAME_LINE("\nMissing name line in Option!");
+    MISSING_OPTION_NAME_LINE("\nMissing name line in Option!"),
+
+    UNKNOWN_ERROR("\nThis exception is not listed in custom exception list");
 
     public final String message;
 
